@@ -43,7 +43,7 @@ module.exports.run = async (bot,message,args) => {
     .setColor('#'+Math.floor(Math.random()*16777215).toString(16))
     .setTitle(`${message.author.username}'s roll with advantage`)
     .setThumbnail("https://cdn.shopify.com/s/files/1/1066/8352/products/metal-dice-single-d20-gold-color-with-black-numbers-metal-die-1_750x.jpg?v=1540309629")
-    .addField(`Roll for character: ${character}`,`Stat rolled for: ${stat}\nStat bonus for ${stat}: ${statBonus}\nInitial roll: ${initialRoll}\nRoll with stat bonus: ${addedRoll}\nSecond roll: ${secondRoll}\nSecond roll with stat bonus: ${secondRollAdded}\nFinal roll: ${finalRoll}`);
+    .setDescription(`Roll for character ${uppercaseString(character)}\nStat rolled for: ${stat}\nStat bonus for ${stat}: ${statBonus}\nInitial roll: ${initialRoll}\nRoll with stat bonus: ${addedRoll}\nSecond roll: ${secondRoll}\nSecond roll with stat bonus: ${secondRollAdded}\nFinal roll: ${finalRoll}`);
     console.log("got to send");
     message.channel.send(result);
   } else {
