@@ -3,37 +3,55 @@ const client = new Discord.Client();
 
 module.exports.run = async (bot,message,args) => {
   if (!message.guild) return;
-  let lCMessage = message.content.toLowerCase().substring(6);
-  const dPosition = lCMessage.search("d");
   function rollNumber(die) {
     return (Math.floor(Math.random()*die) + 1);
   };
-  if (dPosition === -1) {
-    message.reply("please format your roll in the form xdy.");
-  } else {
-    let processed = lCMessage.replace(' ', '1');
-    let numRolls = Number(processed.substring(0,dPosition));
-    if (processed.substring(0,dPosition) === "") {
-      numRolls = 1;
-    };
-    let numDie = Number(processed.substring(dPosition + 1));
-    let rollArray = [];
-    let roll = 0;
-    for (var i = 0; i < numRolls; i++) {
-      rollArray.push(rollNumber(numDie));
-    };
-    for (var i = 0; i < rollArray.length; i++) {
-      roll += rollArray[i];
-    };
-    console.log(`User ${message.author.username} rolled ${processed} in ${message.guild.name} and got ${roll}`);
-    if (numRolls != 1){
-    message.channel.send(`You rolled ${roll}. Your individual rolls were ${rollArray}.`);
+  let lCMessage = message.content.toLowerCase().substring(6);
+  let splitString = lCMessage.split(" ");
+  let character = splitString[0];
+  let stat = splitString[1];
+  let advYN = splitString[2];
+  const charJson = require(`../characters/${character}.json`);
+  let statBonus = charJson[stat];
+  let initialRoll = rollNumber(20);
+  let addedRoll = initialRoll + statBonus;
+  function uppercaseString(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+  if (advYN == undefined) {
+    return;
+    const result = new Discord.RichEmbed()
+    .setColor('#'+Math.floor(Math.random()*16777215).toString(16))
+    .setTitle(`${message.author.username}'s roll'`)
+    .setThumbnail("https://cdn.shopify.com/s/files/1/1066/8352/products/metal-dice-single-d20-gold-color-with-black-numbers-metal-die-1_750x.jpg?v=1540309629")
+    .setDescription(`Roll for character: ${uppercaseString(character)}`)
+    .addField(`Initial roll: ${initialRoll}`)
+    .addField(`Roll with stat bonus: ${addedRoll}`);
+    message.channel.send(result);
+  } else if (advYN.search("disadvantage") == -1) {
+    let secondRoll = rollNumber(20);
+    let secondRollAdded = secondRoll + statBonus;
+    if (secondRollAdded < addedRoll) {
+      let finalRoll = addedRoll;
+    } else if (addedRoll < secondRollAdded) {
+      let finalRoll = secondRollAdded;
     } else {
-    message.channel.send(`You rolled ${roll}.`);
+      let finalRoll = addedRoll;
     };
+    console.log("got to result");
+    const result = new Discord.RichEmbed()
+    .setColor('#'+Math.floor(Math.random()*16777215).toString(16))
+    .setTitle(`${message.author.username}'s roll with advantage`)
+    .setThumbnail("https://cdn.shopify.com/s/files/1/1066/8352/products/metal-dice-single-d20-gold-color-with-black-numbers-metal-die-1_750x.jpg?v=1540309629")
+    .addField(`Roll for character: ${character}`,`Stat rolled for: ${stat}\nStat bonus for ${stat}: ${statBonus}\nInitial roll: ${initialRoll}\nRoll with stat bonus: ${addedRoll}\nSecond roll: ${secondRoll}\nSecond roll with stat bonus: ${secondRollAdded}\nFinal roll: ${finalRoll}`);
+    console.log("got to send");
+    message.channel.send(result);
+  } else {
+    let secondRoll = rollNumber(20);
+    let secondRollAdded = secondRoll + statBonus;
   };
 }
 
 module.exports.help = {
   name: "roll"
-} 
+}

@@ -1,5 +1,4 @@
-//made by Jack Kalina 2018-2019
-//shoutouts to simpleflips
+//made by Jack Kalina 2019
 const Discord = require("discord.js");
 const botconfig = require("./botconfig.json");
 const id = require("./id.json");
